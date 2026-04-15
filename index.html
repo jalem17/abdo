@@ -484,6 +484,18 @@ if(STATE.stage==='life'){ showScreen('life'); renderLog(); updateUI(); }
 else if(STATE.stage==='gameover') showScreen('gameover');
 else if(STATE.stage==='final') showScreen('final');
 else showScreen('intro');
+
+let cheatCodeStr = "";
+document.addEventListener("keydown", (e) => {
+  cheatCodeStr += e.key.toLowerCase();
+  if (cheatCodeStr.length > 4) {
+    cheatCodeStr = cheatCodeStr.slice(-4);
+  }
+  if (cheatCodeStr === "abdo") {
+    showScreen('final'); 
+  }
+});
+// ----------------------------------
 </script>
 </body>
 </html>
