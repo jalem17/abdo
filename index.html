@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حياة عبدو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --warm: #e8dcc8;
+    --accent: #c8502a;
+    --gold: #c9922a;
+    --teal: #2a7c8c;
+    --green: #3a7c4a;
+    --red: #b03030;
+    --muted: #7a7060;
+    --card: #fffef9;
+    --border: #d8cfc0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Ccircle cx='30' cy='30' r='1' fill='%23c8b89a' opacity='0.3'/%3E%3C/svg%3E");
+  }
+
+  #app { width: 100%; max-width: 900px; padding: 16px; }
+
+  .screen { display: none; animation: fadeUp .4s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pop { 0%{transform:scale(0.7);opacity:0} 80%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+  /* === INTRO === */
+  #screen-intro {
+    text-align: center;
+    padding: 80px 20px;
+  }
+  #screen-intro .title-wrap {
+    background: var(--ink);
+    display: inline-block;
+    padding: 12px 40px;
+    margin-bottom: 24px;
+    border-radius: 4px;
+    position: relative;
+  }
+  #screen-intro h1 {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--paper);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  #screen-intro .subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 48px;
+    font-weight: 500;
+  }
+  #screen-intro .ornament {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'Tajawal', sans-serif;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 4px 4px 0 #7a2a10;
+  }
+  .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #7a2a10; }
+  .btn-primary:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #7a2a10; }
+
+  /* === MAIN GAME === */
+  #screen-life {
+    display: none;
+    flex-direction: column;
+    height: 96vh;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 8px 8px 0 var(--border);
+  }
+  #screen-life.active { display: flex; }
+
+  /* header */
+  .game-header {
+    padding: 16px 20px;
+    background: var(--ink);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .phase-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-emoji { font-size: 32px; line-height: 1; }
+  .phase-info h2 { font-size: 18px; font-weight: 800; line-height: 1.1; }
+  .phase-info p { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 500; }
+  .money-badge {
+    background: var(--gold);
+    color: var(--ink);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-reset-sm {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-family: 'Tajawal',sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-reset-sm:hover { background: rgba(255,255,255,.25); }
+
+  /* stats */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--warm);
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .stat-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .stat-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .stat-bar-track {
+    height: 5px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .stat-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .5s ease;
+  }
+  .fill-green { background: var(--green); }
+  .fill-gold { background: var(--gold); }
+  .fill-teal { background: var(--teal); }
+  .fill-accent { background: var(--accent); }
+
+  /* main area */
+  .game-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* characters sidebar */
+  .chars-panel {
+    width: 200px;
+    flex-shrink: 0;
+    border-left: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--warm);
+  }
+  .chars-panel-title {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+    background: var(--paper);
+  }
+  .chars-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .char-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .char-btn:hover { border-color: var(--accent); transform: translateX(-2px); }
+  .char-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--warm); flex-shrink: 0; }
+  .char-info { flex: 1; min-width: 0; }
+  .char-name { font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .char-rel-bar { height: 4px; background: var(--border); border-radius: 99px; margin-top: 4px; overflow: hidden; }
+  .char-rel-fill { height: 100%; border-radius: 99px; transition: width .4s; }
+
+  /* actions + log area */
+  .main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .actions-grid {
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    border-bottom: 2px solid var(--border);
+    background: var(--card);
+    flex-shrink: 0;
+  }
+  .action-btn {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'Tajawal',sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .action-btn:hover { background: var(--warm); border-color: var(--ink); transform: translateY(-1px); }
+  .action-btn:active { transform: translateY(1px); }
+  .action-btn.green { background: #f0f8f0; border-color: #b0d0b0; color: var(--green); }
+  .action-btn.green:hover { background: #e0f0e0; }
+  .action-btn.teal { background: #eef6f8; border-color: #a0ccd4; color: var(--teal); }
+  .action-btn.teal:hover { background: #ddeef4; }
+  .action-btn.gold { background: #fdf6e8; border-color: #e0cc90; color: #8a6010; }
+  .action-btn.gold:hover { background: #faefd8; }
+  .action-btn.red { background: #fdf0f0; border-color: #e0b0b0; color: var(--red); }
+  .action-btn.red:hover { background: #fae0e0; }
+  .action-btn.accent { background: var(--accent); border-color: #7a2a10; color: white; }
+  .action-btn.accent:hover { background: #b04020; }
+  .action-btn.wide { grid-column: span 2; }
+
+  /* event log */
+  .event-log {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    background: #f8f5ef;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .log-entry {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    border-right: 3px solid transparent;
+    background: var(--card);
+    border: 1px solid var(--border);
+    animation: fadeUp .3s ease;
+  }
+  .log-entry.danger { border-right-color: var(--red); border-right-width: 3px; background: #fff8f8; }
+  .log-entry.success { border-right-color: var(--green); border-right-width: 3px; background: #f8fff8; }
+  .log-entry .log-time { font-size: 10px; color: var(--muted); font-weight: 500; display: block; margin-bottom: 2px; }
+
+  /* === OVERLAY === */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .overlay.active { display: flex; }
+  .overlay-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    animation: pop .35s ease;
+    box-shadow: 8px 8px 0 var(--border);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .overlay-emoji {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 16px;
+    background: var(--warm);
+    border: 2px solid var(--border);
+  }
+  .overlay-title {
+    font-size: 22px; font-weight: 900; color: var(--ink); margin-bottom: 10px;
+  }
+  .overlay-text {
+    font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.7; font-weight: 500;
+  }
+  .overlay-choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'Tajawal',sans-serif;
+    font-size: 14px; font-weight: 700;
+    color: var(--ink); cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .choice-btn:hover { background: var(--ink); color: white; border-color: var(--ink); }
+  .choice-btn:active { transform: scale(.97); }
+
+  /* char interaction */
+  .char-interact-btns { display: flex; flex-direction: column; gap: 8px; }
+  .char-interact-btn {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-family: 'Tajawal',sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all .15s;
+  }
+  .char-interact-btn.talk { background: #eef6f8; color: var(--teal); }
+  .char-interact-btn.money { background: #f0f8f0; color: var(--green); }
+  .char-interact-btn.argue { background: #fdf0f0; color: var(--red); }
+  .char-interact-btn.close { background: none; border: none; color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .char-interact-btn:hover { opacity: .85; }
+
+  /* tension meter */
+  .tension-bar {
+    background: var(--warm);
+    border-top: 1px solid var(--border);
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .tension-track { flex: 1; height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .tension-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent), var(--red)); transition: width .5s; }
+
+  /* karma */
+  .karma-display {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--warm);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* gameover / final */
+  #screen-gameover, #screen-final {
+    text-align: center;
+    padding: 60px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 8px 8px 0 var(--border);
+  }
+  .end-emoji { font-size: 80px; margin-bottom: 20px; display: block; }
+  .end-title { font-size: 36px; font-weight: 900; margin-bottom: 16px; }
+  .end-title.bad { color: var(--red); }
+  .end-title.good { color: var(--green); }
+  .end-reason {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--muted);
+    font-weight: 600;
+    background: var(--warm);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 32px;
+  }
+  .btn-danger {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Tajawal',sans-serif;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 4px 4px 0 #601010;
+  }
+  .btn-danger:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #601010; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="screen-intro" class="screen active">
+    <span class="ornament">🌍</span>
+    <div class="title-wrap">
+      <h1>حياة عبدو</h1>
+    </div>
+    <p class="subtitle">رحلة من الدار البيضاء... نحو المجهول</p>
+    <button class="btn-primary" onclick="startGame()">ابدأ المسار</button>
+  </div>
+
+  <div id="screen-life" class="screen">
+    <div class="game-header">
+      <div class="phase-badge">
+        <span class="phase-emoji" id="phase-emoji">👶</span>
+        <div class="phase-info">
+          <h2 id="phase-title">مرحلة الرضاعة</h2>
+          <p id="age-display">العمر: 0</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="karma-display" id="karma-display">الكارما: 50</span>
+        <div class="money-badge">🪙 <span id="money-display">0</span></div>
+        <button class="btn-reset-sm" onclick="confirmReset()">إعادة</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-label"><span>❤️ الصحة</span><span id="hp-val">100</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill fill-green" id="hp-bar" style="width:100%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label"><span>😊 السعادة</span><span id="hap-val">80</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill fill-gold" id="hap-bar" style="width:80%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label"><span>🧠 الذكاء</span><span id="int-val">5</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill fill-teal" id="int-bar" style="width:5%"></div></div>
+      </div>
+      <div class="stat-item" id="visa-stat" style="display:none">
+        <div class="stat-label"><span>✈️ الفيزا</span><span id="visa-val">0</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill fill-accent" id="visa-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="game-body">
+      <div class="main-panel">
+        <div class="actions-grid" id="actions-grid"></div>
+        <div class="event-log" id="event-log">
+          <div class="log-entry"><span class="log-time">البداية</span>لا أحداث بعد...</div>
+        </div>
+      </div>
+      <div class="chars-panel">
+        <div class="chars-panel-title">الشخصيات</div>
+        <div class="chars-list" id="chars-list"></div>
+      </div>
+    </div>
+    <div class="tension-bar" id="tension-bar" style="display:none">
+      <span>⚖️ التوتر العقائدي</span>
+      <div class="tension-track"><div class="tension-fill" id="tension-fill" style="width:0%"></div></div>
+      <span id="tension-val">0%</span>
+    </div>
+  </div>
+
+  <div id="screen-gameover" class="screen">
+    <span class="end-emoji">🪦</span>
+    <div class="end-title bad">نهاية القصة</div>
+    <div class="end-reason" id="gameover-reason"></div>
+    <button class="btn-danger" onclick="resetGame()">🔄 محاولة مجدداً</button>
+  </div>
+
+  <div id="screen-final" class="screen">
+    <span class="end-emoji">✈️💍</span>
+    <div class="end-title good">تمت المهمة!</div>
+    <div class="end-reason">سافرت من المغرب إلى السعودية، وتخطيت كل حواجز السفارة. جلست مع عائلتها وأقنعتهم، وتوجتم قصة حبكم بنهاية سعيدة رغم كل الاختلافات.</div>
+    <button class="btn-primary" onclick="resetGame()">🔄 اللعب من جديد</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-event">
+  <div class="overlay-card">
+    <div class="overlay-emoji" id="ov-emoji">⭐</div>
+    <div class="overlay-title" id="ov-title"></div>
+    <div class="overlay-text" id="ov-text"></div>
+    <div class="overlay-choices" id="ov-choices"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay-char">
+  <div class="overlay-card">
+    <img id="char-ov-avatar" class="char-avatar" style="width:80px;height:80px;margin:0 auto 12px;display:block;" src="" alt="">
+    <div class="overlay-title" id="char-ov-name"></div>
+    <div class="overlay-text" id="char-ov-rel"></div>
+    <div class="char-interact-btns">
+      <button class="char-interact-btn talk" onclick="charAction('talk')">💬 قضاء وقت والتحدث</button>
+      <button class="char-interact-btn money" onclick="charAction('money')">🪙 طلب مال</button>
+      <button class="char-interact-btn argue" onclick="charAction('argue')">😡 افتعال شجار</button>
+      <button class="char-interact-btn close" onclick="closeCharOverlay()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STATE = {
+  stage: 'intro',
+  age: 0,
+  month: 1,
+  money: 0,
+  health: 100,
+  happiness: 80,
+  intellect: 5,
+  karma: 50,
+  flags: { hasSmartphone: false, secretRevealed: false, religiousTension: 0, visaProgress: 0, wasta: 0 },
+  characters: {
+    ismail: { name: 'إسماعيل (الأب)', relation: 50, met: true, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ismail&style=circle&top=shortHair&facialHair=beardLight&backgroundColor=b6e3f4' },
+    wafaa:  { name: 'وفاء (الأم)',    relation: 90, met: true, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Wafaa&style=circle&top=hijab&backgroundColor=ffdfbf' },
+    amine:  { name: 'أمين (الأخ)',    relation: 70, met: true, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Amine&style=circle&backgroundColor=c0aede' },
+    fattoum:{ name: 'فطوم',            relation: 0,  met: false, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Fattoum&style=circle&top=longHair&backgroundColor=ffb6b9' },
+    ali:    { name: 'علي (أبو فطوم)', relation: 0,  met: false, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ali&style=circle&top=turban&facialHair=beardMajestic&backgroundColor=d1d4f9' },
+    yousra: { name: 'يسرى (أم فطوم)',relation: 0,  met: false, img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Yousra&style=circle&top=longHair&backgroundColor=ffd5dc' }
+  },
+  log: [],
+  activeChar: null
+};
+
+const PHASES = [
+  { max: 4,  emoji: '🍼', title: 'مرحلة الرضاعة' },
+  { max: 13, emoji: '🎒', title: 'مرحلة الطفولة' },
+  { max: 18, emoji: '📱', title: 'المراهقة' },
+  { max: 999,emoji: '💼', title: 'الشباب والكفاح' }
+];
+
+function clamp(v, lo=0, hi=100){ return Math.max(lo, Math.min(hi, v)); }
+
+function save(){
+  try { localStorage.setItem('abdouSave2', JSON.stringify({ ...STATE, log: STATE.log.slice(-60) })); } catch(e){}
+}
+function load(){
+  try {
+    const d = localStorage.getItem('abdouSave2');
+    if(d){
+      const p = JSON.parse(d);
+      Object.assign(STATE, p);
+    }
+  } catch(e){}
+}
+
+function addLog(msg, type='normal'){
+  const timeStr = STATE.age < 17 ? `عمر ${STATE.age}` : `عمر ${STATE.age} - شهر ${STATE.month}`;
+  STATE.log.push({ id: Date.now()+Math.random(), text: msg, time: timeStr, type });
+  renderLog();
+}
+
+function renderLog(){
+  const el = document.getElementById('event-log');
+  const entries = STATE.log.slice(-80);
+  el.innerHTML = entries.map(e => `
+    <div class="log-entry ${e.type}">
+      <span class="log-time">${e.time}</span>
+      ${e.text}
+    </div>
+  `).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function getPhase(){
+  return PHASES.find(p => STATE.age < p.max) || PHASES[PHASES.length-1];
+}
+
+function updateUI(){
+  const ph = getPhase();
+  document.getElementById('phase-emoji').textContent = ph.emoji;
+  document.getElementById('phase-title').textContent = ph.title;
+  const ageStr = STATE.age < 17 ? `العمر: ${STATE.age}` : `العمر: ${STATE.age} | الشهر: ${STATE.month}`;
+  document.getElementById('age-display').textContent = ageStr;
+  document.getElementById('money-display').textContent = Math.floor(STATE.money).toLocaleString('ar');
+  document.getElementById('karma-display').textContent = `الكارما: ${Math.floor(STATE.karma)}`;
+
+  const hp = clamp(STATE.health);
+  const hap = clamp(STATE.happiness);
+  const intel = clamp(STATE.intellect);
+  document.getElementById('hp-val').textContent = Math.floor(hp);
+  document.getElementById('hap-val').textContent = Math.floor(hap);
+  document.getElementById('int-val').textContent = Math.floor(intel);
+  document.getElementById('hp-bar').style.width = hp+'%';
+  document.getElementById('hap-bar').style.width = hap+'%';
+  document.getElementById('int-bar').style.width = intel+'%';
+
+  const visaStat = document.getElementById('visa-stat');
+  if(STATE.flags.hasSmartphone){
+    visaStat.style.display = '';
+    document.getElementById('visa-val').textContent = STATE.flags.visaProgress;
+    document.getElementById('visa-bar').style.width = clamp(STATE.flags.visaProgress)+'%';
+  } else {
+    visaStat.style.display = 'none';
+  }
+
+  const tb = document.getElementById('tension-bar');
+  if(STATE.flags.secretRevealed || STATE.flags.religiousTension > 0){
+    tb.style.display = 'flex';
+    document.getElementById('tension-fill').style.width = clamp(STATE.flags.religiousTension)+'%';
+    document.getElementById('tension-val').textContent = STATE.flags.religiousTension+'%';
+  } else {
+    tb.style.display = 'none';
+  }
+
+  renderChars();
+  renderActions();
+}
+
+function renderChars(){
+  const list = document.getElementById('chars-list');
+  list.innerHTML = '';
+  Object.entries(STATE.characters).forEach(([id, c]) => {
+    if(!c.met) return;
+    const relColor = c.relation > 70 ? '#e05080' : c.relation > 40 ? '#c9922a' : '#b03030';
+    const btn = document.createElement('button');
+    btn.className = 'char-btn';
+    btn.innerHTML = `
+      <img class="char-avatar" src="${c.img}" alt="" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'40\\' height=\\'40\\'><circle cx=\\'20\\' cy=\\'20\\' r=\\'20\\' fill=\\'%23e8dcc8\\'/></svg>'">
+      <div class="char-info">
+        <div class="char-name">${c.name}</div>
+        <div class="char-rel-bar"><div class="char-rel-fill" style="width:${c.relation}%;background:${relColor}"></div></div>
+      </div>
+    `;
+    btn.onclick = () => openCharOverlay(id);
+    list.appendChild(btn);
+  });
+}
+
+function renderActions(){
+  const grid = document.getElementById('actions-grid');
+  grid.innerHTML = '';
+  const a = STATE.age;
+  const f = STATE.flags;
+  let btns = [];
+
+  if(a < 4){
+    btns = [
+      ['البكاء 😭', () => advanceTime(0,5,0,0,0,'بكيت فتم إطعامك.')],
+      ['محاولة الكلام 🗣️', () => advanceTime(0,10,0,2,0,'ضحكت العائلة منك.','success')],
+      ['اللعب 🧸', () => advanceTime(0,15,0,5,0,'لعبت وأنت سعيد.','success'), 'wide green']
+    ];
+  } else if(a < 13){
+    btns = [
+      ['المدرسة 🎒', () => advanceTime(-2,-5,0,15,0,'ذهبت للمدرسة وتعلمت.')],
+      ['الشارع ⚽', () => advanceTime(5,10,0,0,0,'لعبت كرة القدم.','success')],
+      ['قراءة كتاب 📖', () => advanceTime(0,5,-0,10,0,'قرأت وتعلمت.','success')],
+      ['طلب مصروف 🪙', () => {
+        if(STATE.characters.ismail.relation > 60){
+          updateChar('ismail',-5); advanceTime(0,10,50,0,0,'أعطاك والدك مصروفاً.','success');
+        } else { advanceTime(0,-5,0,0,0,'رفض والدك.','danger'); }
+      }, 'gold']
+    ];
+  } else if(a < 18){
+    btns = [
+      ['دراسة 📚', () => advanceTime(-5,-10,0,20,5,'درست بجد.')],
+      ['مساعدة الأهل 🧹', () => { updateChar('wafaa',10); advanceTime(-5,5,0,0,10,'ساعدت أمك.','success'); }],
+      ['عمل جزئي ☕', () => advanceTime(-10,-5,500,2,5,'كسبت بعض المال.','success'), 'green'],
+      ['رياضة 🏃', () => advanceTime(15,5,-0,0,0,'تحسنت لياقتك.','success'), 'teal']
+    ];
+  } else {
+    btns = [
+      ['العمل 💼', () => {
+        const sal = 2000 + (STATE.intellect * 20) + (f.wasta * 50);
+        advanceTime(-5,-5,sal,1,0,`عملت واستلمت ${Math.floor(sal)} ريال.`,'success');
+      }, 'green'],
+      ['الجيم 🏋️', () => advanceTime(15,5,-150,0,0,'تدربت في الصالة.','success')],
+      ['قراءة كتاب 📖', () => advanceTime(0,5,-50,10,0,'قرأت كتاباً نافعاً.','success')],
+      ['بناء واسطة 🤝', () => {
+        if(STATE.money >= 1000){
+          STATE.flags.wasta += 5;
+          advanceTime(0,5,-1000,0,-2,'عزمت أشخاصاً وبنيت واسطة.');
+        } else { advanceTime(0,0,0,0,0,'ليس لديك مال كافٍ.'); }
+      }, 'gold']
+    ];
+    if(f.hasSmartphone){
+      btns.push(['مكالمة فطوم 📱', () => {
+        if(f.religiousTension > 80){
+          updateChar('fattoum',-10); advanceTime(-2,-15,0,0,0,'مكالمة مليئة بالتوتر.','danger');
+        } else { updateChar('fattoum',5); advanceTime(0,15,0,0,0,'تحدثت مع فطوم بسعادة.','success'); }
+      }, 'teal']);
+      btns.push(['السفارة 🛂', () => {
+        STATE.flags.visaProgress = clamp(STATE.flags.visaProgress + 3, 0, 100);
+        advanceTime(-10,-10,-300,1,0,'ركضت بين الإدارات.','danger');
+      }, 'teal']);
+    }
+    if(f.secretRevealed){
+      btns.push(['نقاش ديني ⚖️', () => {
+        if(Math.random() > .5){
+          STATE.flags.religiousTension = Math.max(0, STATE.flags.religiousTension - 15);
+          advanceTime(0,10,0,5,0,'النقاش خفف التوتر.','success');
+        } else {
+          STATE.flags.religiousTension = clamp(STATE.flags.religiousTension + 15, 0, 100);
+          advanceTime(-5,-15,0,0,0,'تحول النقاش لصراخ.','danger');
+        }
+      }, 'red']);
+    }
+    if(f.hasSmartphone){
+      btns.push(['✈️ السفر للسعودية', attemptTravel, 'wide accent']);
+    }
+  }
+
+  btns.forEach(([label, fn, cls='']) => {
+    const b = document.createElement('button');
+    b.className = 'action-btn ' + cls;
+    b.textContent = label;
+    b.onclick = fn;
+    grid.appendChild(b);
+  });
+}
+
+function advanceTime(hp=0, hap=0, mon=0, intel=0, karma=0, msg='', type='normal'){
+  STATE.health = clamp(STATE.health + hp - (STATE.age > 40 ? 2 : 0));
+  STATE.happiness = clamp(STATE.happiness + hap - (STATE.flags.religiousTension > 80 ? 5 : 0));
+  STATE.intellect = clamp(STATE.intellect + intel);
+  STATE.karma = clamp(STATE.karma + karma);
+  STATE.money = Math.max(0, STATE.money + mon);
+
+  if(STATE.age < 17){
+    STATE.age += 1;
+    STATE.month = 1;
+  } else {
+    STATE.month += 1;
+    if(STATE.month > 12){ STATE.month = 1; STATE.age += 1; }
+  }
+
+  if(msg) addLog(msg, type);
+  updateUI();
+  save();
+
+  if(checkGameOver()) return;
+  triggerEvent();
+}
+
+function checkGameOver(){
+  if(STATE.health <= 0){ gameOver('تدهورت صحتك بالكامل.'); return true; }
+  if(STATE.happiness <= 0){ gameOver('أصابك اكتئاب حاد وتوقفت عن مواجهة الحياة.'); return true; }
+  if(STATE.age >= 55){ gameOver('مرت السنوات... كبرت في السن وتبخرت أحلامك.'); return true; }
+  if(STATE.flags.religiousTension >= 100){ gameOver('الخلافات العقائدية وصلت لطريق مسدود وانقطع التواصل للأبد.'); return true; }
+  return false;
+}
+
+function updateChar(id, delta){
+  if(STATE.characters[id])
+    STATE.characters[id].relation = clamp(STATE.characters[id].relation + delta);
+}
+
+const EVENTS = [
+  {
+    cond: a => a === 0,
+    title: 'ولادة جديدة', emoji: '👶', color: '#e8f4ff',
+    text: 'لقد ولدت للتو في الدار البيضاء. والداك إسماعيل ووفاء ينظران إليك.',
+    choices: [
+      { text: 'البكاء بصوت عالٍ', fn: () => advanceTime(5,-5,0,1,0,'بكيت بصوت عالٍ، أمك احتضنتك.') },
+      { text: 'النوم بهدوء', fn: () => advanceTime(10,5,0,0,0,'نمت بهدوء، والدك ابتسم براحة.','success') }
+    ]
+  },
+  {
+    cond: a => a === 2,
+    title: 'الخطوات الأولى', emoji: '👣', color: '#e8f8e8',
+    text: 'تحاول المشي. أخوك أمين يشجعك.',
+    choices: [
+      { text: 'المشي نحو أمين', fn: () => { updateChar('amine',10); advanceTime(0,10,0,5,0,'مشيت نحو أمين وعانقك.','success'); } },
+      { text: 'المشي نحو الأب', fn: () => { updateChar('ismail',15); advanceTime(0,5,0,5,0,'أبوك التقطك بسعادة.','success'); } }
+    ]
+  },
+  {
+    cond: a => a === 6,
+    title: 'شجار المدرسة', emoji: '🥪', color: '#fffbe8',
+    text: 'طفل آخر أخذ طعامك في الاستراحة.',
+    choices: [
+      { text: 'الدفاع عن نفسك', fn: () => advanceTime(-5,0,0,0,5,'تشاجرت واسترجعت طعامك.') },
+      { text: 'إخبار المعلم', fn: () => advanceTime(0,-5,0,10,-5,'أخبرت المعلم، ذكاؤك زاد.') }
+    ]
+  },
+  {
+    cond: a => a === 9,
+    title: 'كلب ضال', emoji: '🐕', color: '#fff0f0',
+    text: 'أثناء لعبك في الزقاق هاجمك كلب ضال.',
+    choices: [
+      { text: 'الركض بسرعة', fn: () => advanceTime(5,-5,0,0,0,'هربت بنجاح.','success') },
+      { text: 'رمي حجر', fn: () => advanceTime(-10,-10,0,0,-5,'عضك الكلب قبل أن يهرب.','danger') }
+    ]
+  },
+  {
+    cond: a => a === 11,
+    title: 'أزمة عائلية', emoji: '💔', color: '#f5f0f0',
+    text: 'تسمع والدك يصرخ على أمك بسبب الديون المتراكمة.',
+    choices: [
+      { text: 'إعطاء حصالتك لأبيك', fn: () => { updateChar('ismail',20); advanceTime(0,-10,0,5,10,'أعطيته مدخراتك. دمعت عيناه.','success'); } },
+      { text: 'الاختباء في غرفتك', fn: () => advanceTime(0,-5,0,0,0,'تجنبت الموقف.') }
+    ]
+  },
+  {
+    cond: a => a === 14,
+    title: 'أصدقاء السوء', emoji: '🎱', color: '#f5eeff',
+    text: 'يعرضون عليك الهروب من الإعدادية للعب البلياردو.',
+    choices: [
+      { text: 'الذهاب معهم', fn: () => { updateChar('ismail',-20); advanceTime(0,15,-20,-10,-10,'علم والدك وعاقبك بشدة.','danger'); } },
+      { text: 'الرفض والدراسة', fn: () => advanceTime(0,-5,0,15,10,'درست بجد رغم سخرية زملائك.','success') }
+    ]
+  },
+  {
+    cond: a => a === 15,
+    title: 'فرصة الاكتساب', emoji: '🛒', color: '#f0fff0',
+    text: 'جار عجوز يطلب منك المساعدة في حمل البضاعة مقابل أجر.',
+    choices: [
+      { text: 'قبول العرض', fn: () => { updateChar('wafaa',5); advanceTime(-5,5,200,0,15,'ساعدته وكسبت أجرك بشرف.','success'); } },
+      { text: 'الرفض بلطف', fn: () => advanceTime(0,0,0,0,0,'مشيت في طريقك.') }
+    ]
+  },
+  {
+    cond: a => a === 17 && !STATE.flags.hasSmartphone,
+    title: 'النافذة للمملكة', emoji: '📱', color: '#e8f4ff',
+    text: 'أمك أهدتك هاتفاً. عبر تطبيق تعارف، التقطت إشارتك فتاة اسمها فطوم من السعودية.',
+    choices: [
+      { text: 'التعرف عليها', fn: () => {
+        STATE.flags.hasSmartphone = true;
+        STATE.characters.fattoum.met = true;
+        STATE.characters.fattoum.relation = 20;
+        advanceTime(0,20,0,10,0,'بدأت تتحدث مع فطوم...','success');
+      }}
+    ]
+  },
+  {
+    cond: a => a >= 18 && STATE.flags.hasSmartphone && !STATE.flags.secretRevealed && Math.random() > .5,
+    title: 'سؤال عقائدي', emoji: '🕌', color: '#fff8e8',
+    text: 'فطوم تسألك عن صلواتك ومذهبك. هي شيعية محافظة وأنت تميل للإلحاد.',
+    choices: [
+      { text: 'الاعتراف بالحقيقة', fn: () => {
+        STATE.flags.secretRevealed = true;
+        if(Math.random() > .5){
+          STATE.flags.religiousTension = clamp(STATE.flags.religiousTension+30,0,100);
+          updateChar('fattoum',-15);
+          advanceTime(0,-10,0,0,0,'صُدمت فطوم لكنها قررت محاولة تغييرك.');
+        } else {
+          STATE.flags.religiousTension = clamp(STATE.flags.religiousTension+60,0,100);
+          updateChar('fattoum',-40);
+          advanceTime(0,-30,0,0,0,'شجار عنيف كاد ينهي كل شيء.','danger');
+        }
+      }},
+      { text: 'التهرب والكذب', fn: () => advanceTime(0,-10,0,5,-5,'كذبت لكن شعورك بالذنب يقتلك.') }
+    ]
+  },
+  {
+    cond: a => a >= 20 && STATE.flags.hasSmartphone && Math.random() > .7,
+    title: 'تسريب الأخبار', emoji: '👁️', color: '#fff0f0',
+    text: 'أخوات فطوم اكتشفوا محادثاتكما ويخططون لفضح الأمر.',
+    choices: [
+      { text: 'مراسلة أمها يسرى', fn: () => {
+        STATE.characters.yousra.met = true;
+        if(STATE.intellect > 30){
+          updateChar('yousra',30); advanceTime(0,10,0,0,0,'أقنعت يسرى بنيتك.','success');
+        } else { updateChar('yousra',-20); advanceTime(0,-15,0,0,0,'تلعثمت واعتبرتك غير جاد.','danger'); }
+      }},
+      { text: 'تجاهل الأمر', fn: () => {
+        STATE.characters.ali.met = true;
+        updateChar('ali',-30); updateChar('fattoum',-15);
+        advanceTime(0,-20,0,0,0,'علم أبوها وسحب هاتفها.','danger');
+      }}
+    ]
+  },
+  {
+    cond: a => a >= 21 && STATE.flags.hasSmartphone && Math.random() > .8,
+    title: 'صدمة التأشيرة', emoji: '🛂', color: '#e8f8ff',
+    text: 'السفارة السعودية تطلب أوراقاً معقدة ورسوماً باهظة لدخولك.',
+    choices: [
+      { text: 'دفع سمسار (5000)', fn: () => {
+        if(STATE.money >= 5000){
+          STATE.flags.visaProgress = clamp(STATE.flags.visaProgress+30,0,100);
+          advanceTime(0,0,-5000,0,-10,'سمسار الفيزا ساعدك.','success');
+        } else { advanceTime(0,-10,0,0,0,'طردك السمسار.','danger'); }
+      }},
+      { text: 'الطريق القانوني', fn: () => {
+        STATE.flags.visaProgress = clamp(STATE.flags.visaProgress+5,0,100);
+        advanceTime(-5,-10,-200,5,10,'أيام من التعب في الطوابير.');
+      }}
+    ]
+  },
+  {
+    cond: a => a >= 22 && Math.random() > .65,
+    title: 'فرصة عمل', emoji: '📈', color: '#f0fff0',
+    text: 'صديق يعرض عليك مشروعاً تجارياً يتطلب رأس مال 3000.',
+    choices: [
+      { text: 'المخاطرة (3000)', fn: () => {
+        if(STATE.money >= 3000){
+          if(Math.random() > .5){ advanceTime(0,20,8000,5,0,'نجح المشروع وتضاعف مالك!','success'); }
+          else { advanceTime(0,-20,-3000,5,0,'فشل المشروع.','danger'); }
+        } else { advanceTime(0,-5,0,0,0,'لا تملك المال الكافي.'); }
+      }},
+      { text: 'الرفض', fn: () => advanceTime(0,0,0,2,0,'حافظت على مالك بأمان.') }
+    ]
+  },
+  {
+    cond: a => a >= 24 && STATE.flags.hasSmartphone && STATE.characters.fattoum.relation > 60 && Math.random() > .85,
+    title: 'زيارة مفاجئة', emoji: '🌹', color: '#fff0f8',
+    text: 'فطوم تخبرك أنها ستزور المغرب مع عائلتها في إجازة. هذه فرصتك لتقديم نفسك.',
+    choices: [
+      { text: 'الترتيب للقاء رسمي', fn: () => {
+        updateChar('ali',20); updateChar('fattoum',15);
+        advanceTime(0,20,0,5,10,'اللقاء سار على ما يرام.','success');
+      }},
+      { text: 'الاعتذار بتواضع', fn: () => {
+        updateChar('fattoum',-5); advanceTime(0,-10,0,0,0,'خبت آمالها منك.','danger');
+      }}
+    ]
+  }
+];
+
+const GENERIC_EVENTS = [
+  { emoji:'🤧', text:'أصبت بإنفلونزا عابرة.', hp:-10, hap:-5, mon:-100, log:'مرضت ودفعت للطبيب.', type:'danger' },
+  { emoji:'💵', text:'وجدت مالاً في الشارع.', hp:0, hap:10, mon:300, log:'وجدت مالاً بالصدفة.', type:'success' },
+  { emoji:'☕', text:'شربت قهوة لذيذة في المقهى.', hp:5, hap:5, mon:-20, log:'يوم هادئ في المقهى.', type:'normal' },
+  { emoji:'🌧️', text:'يوم ممطر وكئيب في الدار البيضاء.', hp:0, hap:-5, mon:0, log:'جو كئيب.', type:'normal' },
+  { emoji:'🏃', text:'مارست الجري في الكورنيش.', hp:15, hap:10, mon:0, log:'تحسنت لياقتك.', type:'success' },
+  { emoji:'🎵', text:'سمعت موسيقى جميلة في الشارع.', hp:0, hap:8, mon:0, log:'أسعدتك الموسيقى.', type:'success' },
+  { emoji:'📰', text:'قرأت أخباراً مقلقة عن البلد.', hp:0, hap:-8, mon:0, log:'الأخبار أحزنتك.', type:'normal' },
+  { emoji:'🍊', text:'أهدتك جارتكم فاكهة من بستانها.', hp:5, hap:5, mon:0, log:'لطف الجيران يسعدك.', type:'success' }
+];
+
+let pendingEvent = null;
+
+function triggerEvent(){
+  const specific = EVENTS.filter(e => e.cond(STATE.age));
+  if(specific.length > 0){
+    const ev = specific[Math.floor(Math.random()*specific.length)];
+    pendingEvent = ev;
+    showEventOverlay(ev);
+    return;
+  }
+  if(Math.random() > .55){
+    const ev = GENERIC_EVENTS[Math.floor(Math.random()*GENERIC_EVENTS.length)];
+    const wrapped = {
+      title:'حدث يومي', emoji: ev.emoji, color:'#f8f5ef',
+      text: ev.text,
+      choices:[{ text:'متابعة', fn:()=>advanceTime(ev.hp,ev.hap,ev.mon,0,0,ev.log,ev.type) }]
+    };
+    pendingEvent = wrapped;
+    showEventOverlay(wrapped);
+  }
+}
+
+function showEventOverlay(ev){
+  document.getElementById('ov-emoji').textContent = ev.emoji;
+  document.getElementById('ov-emoji').style.background = ev.color || '#f8f5ef';
+  document.getElementById('ov-title').textContent = ev.title;
+  document.getElementById('ov-text').textContent = ev.text;
+  const choicesEl = document.getElementById('ov-choices');
+  choicesEl.innerHTML = '';
+  ev.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.text;
+    btn.onclick = () => { closeEventOverlay(); c.fn(); };
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('overlay-event').classList.add('active');
+}
+function closeEventOverlay(){ document.getElementById('overlay-event').classList.remove('active'); }
+
+function openCharOverlay(id){
+  STATE.activeChar = id;
+  const c = STATE.characters[id];
+  document.getElementById('char-ov-avatar').src = c.img;
+  document.getElementById('char-ov-name').textContent = c.name;
+  document.getElementById('char-ov-rel').textContent = `العلاقة: ${c.relation}%`;
+  document.getElementById('overlay-char').classList.add('active');
+}
+function closeCharOverlay(){ document.getElementById('overlay-char').classList.remove('active'); STATE.activeChar = null; }
+
+function charAction(type){
+  const id = STATE.activeChar;
+  const c = STATE.characters[id];
+  closeCharOverlay();
+  const firstName = c.name.split(' ')[0];
+  if(type === 'talk'){
+    updateChar(id,5); advanceTime(0,5,0,0,0,`قضيت وقتاً مع ${firstName}.`,'success');
+  } else if(type === 'money'){
+    if(c.relation > 70){
+      const amt = Math.floor(Math.random()*500)+200;
+      updateChar(id,-10); advanceTime(0,0,amt,0,0,`أعطاك ${firstName} ${amt} ريال.`,'success');
+    } else { updateChar(id,-20); advanceTime(0,-10,0,0,0,`رفض ${firstName} إعطاءك المال.`,'danger'); }
+  } else if(type === 'argue'){
+    updateChar(id,-15); advanceTime(0,-10,0,0,0,`تشاجرت مع ${firstName}.`,'danger');
+  }
+}
+
+function attemptTravel(){
+  const target = 150000;
+  if(STATE.money < target){
+    showEventOverlay({ title:'نقص الأموال', emoji:'💸', color:'#fff0f0',
+      text:`تحتاج ${target.toLocaleString('ar')} ريال للفيزا والتذاكر والمهر. لديك ${Math.floor(STATE.money).toLocaleString('ar')}.`,
+      choices:[{ text:'العودة', fn:()=>{} }] }); return;
+  }
+  if(STATE.flags.visaProgress < 100){
+    showEventOverlay({ title:'الفيزا عالقة', emoji:'🛂', color:'#e8f8ff',
+      text:`نسبة ملف الفيزا ${STATE.flags.visaProgress}%. ما زالت الأوراق في السفارة.`,
+      choices:[{ text:'العودة', fn:()=>{} }] }); return;
+  }
+  if(STATE.flags.religiousTension > 50 || STATE.characters.ali.relation < 30){
+    showEventOverlay({ title:'رفض الأهل', emoji:'🚫', color:'#fff0f0',
+      text:'والدها يرفضك بسبب الاختلاف العقائدي وعدم ثقته بك.',
+      choices:[{ text:'العودة', fn:()=>{} }] }); return;
+  }
+  showScreen('final');
+}
+
+function gameOver(reason){
+  document.getElementById('gameover-reason').textContent = reason;
+  showScreen('gameover');
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-'+name);
+  if(target) target.classList.add('active');
+  STATE.stage = name;
+  save();
+}
+
+function startGame(){
+  STATE.stage = 'life';
+  showScreen('life');
+  addLog('بدأت رحلتك في الحياة من الدار البيضاء.','success');
+  updateUI();
+  setTimeout(triggerEvent, 300);
+}
+
+function confirmReset(){
+  if(confirm('هل تريد مسح الحفظ وبدء من جديد؟')) resetGame();
+}
+
+function resetGame(){
+  localStorage.removeItem('abdouSave2');
+  Object.assign(STATE, {
+    stage:'intro', age:0, month:1, money:0, health:100, happiness:80, intellect:5, karma:50,
+    flags:{ hasSmartphone:false, secretRevealed:false, religiousTension:0, visaProgress:0, wasta:0 },
+    characters:{
+      ismail:{ name:'إسماعيل (الأب)', relation:50, met:true, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Ismail&style=circle&top=shortHair&facialHair=beardLight&backgroundColor=b6e3f4' },
+      wafaa:{ name:'وفاء (الأم)', relation:90, met:true, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Wafaa&style=circle&top=hijab&backgroundColor=ffdfbf' },
+      amine:{ name:'أمين (الأخ)', relation:70, met:true, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Amine&style=circle&backgroundColor=c0aede' },
+      fattoum:{ name:'فطوم', relation:0, met:false, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Fattoum&style=circle&top=longHair&backgroundColor=ffb6b9' },
+      ali:{ name:'علي (أبو فطوم)', relation:0, met:false, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Ali&style=circle&top=turban&facialHair=beardMajestic&backgroundColor=d1d4f9' },
+      yousra:{ name:'يسرى (أم فطوم)', relation:0, met:false, img:'https://api.dicebear.com/7.x/avataaars/svg?seed=Yousra&style=circle&top=longHair&backgroundColor=ffd5dc' }
+    },
+    log:[], activeChar:null
+  });
+  closeEventOverlay();
+  closeCharOverlay();
+  showScreen('intro');
+}
+
+load();
+if(STATE.stage === 'life'){
+  showScreen('life');
+  renderLog();
+  updateUI();
+} else if(STATE.stage === 'gameover'){
+  showScreen('gameover');
+} else if(STATE.stage === 'final'){
+  showScreen('final');
+} else {
+  showScreen('intro');
+}
+</script>
+</body>
+</html>
